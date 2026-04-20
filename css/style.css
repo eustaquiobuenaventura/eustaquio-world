@@ -133,3 +133,4 @@ footer {
     header h1 { font-size: 2rem; }
 }
 /* Variable fonts/typography test */
+:root { --accent-color-alt: #5856D2; }

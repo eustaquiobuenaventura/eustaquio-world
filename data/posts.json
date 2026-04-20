@@ -1,5 +1,12 @@
 [
   {
+    "id": 4,
+    "title": "The Beauty of Simplicity",
+    "date": "2026-04-20",
+    "content": "In a world of complex frameworks and heavy libraries, there is something profoundly satisfying about the clarity of pure HTML, CSS, and JavaScript. It's fast, it's lightweight, and it works. This is the foundation upon which I will build my digital presence.",
+    "author": "eustaquiobuenaventura"
+  },
+  {
     "id": 3,
     "title": "The Art of Identity and Code",
     "date": "2026-04-20",

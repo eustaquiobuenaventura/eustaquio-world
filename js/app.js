@@ -13,9 +13,6 @@ const routes = {
         `;
     },
     'blog': async () => {
-        const postsContainer = document.getElementById('posts-container');
-        if (!postsContainer) return '';
-
         try {
             const response = await fetch('data/posts.json');
             if (!response.ok) throw new Error('Could not fetch posts');

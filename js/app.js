@@ -12,27 +12,87 @@ const routes = {
             </section>
         `;
     },
-    'blog': () => {
-        return `
-            <section id="blog">
-                <h2>Thoughts & Logs</h2>
-                <div id="posts-container">
-                    <p>Loading posts...</p>
-                </div>
-            </section>
-        `;
+    'blog': async () => {
+        const postsContainer = document.getElementById('posts-container');
+        if (!postsContainer) return '';
+
+        try {
+            const response = await fetch('data/posts.json');
+            if (!response.ok) throw new Error('Could not fetch posts');
+            const posts = await response.json();
+
+            if (posts.length === 0) {
+                return `<section id="blog"><h2>Thoughts & Logs</h2><p>No posts yet.</p></section>`;
+            }
+
+            let postsHtml = `
+                <section id="blog">
+                    <h2>Thoughts & Logs</h2>
+                    <div id="posts-list">
+            `;
+
+            posts.forEach(post => {
+                postsHtml += `
+                    <article class="post">
+                        <h3>${post.title}</h3>
+                        <small>${post.date}</small>
+                        <p>${post.excerpt}</p>
+                        <a href="#post/${post.id}">Read more</a>
+                    </article>
+                `;
+            });
+
+            postsHtml += `</div></section>`;
+            return postsHtml;
+        } catch (error) {
+            console.error('Error loading posts:', error);
+            return `<section id="blog"><h2>Thoughts & Logs</h2><p>Error loading posts.</p></section>`;
+        }
     }
 };
 
-const navigateTo = (route) => {
+const navigateTo = async (route) => {
     const contentArea = document.getElementById('app-content');
-    if (routes[route]) {
-        contentArea.innerHTML = routes[route]();
-    } else {
-        contentArea.innerHTML = '<h2>404 - Not Found</h2><p>The requested section does not exist.</p>';
+    if (!contentArea) return;
+
+    // Special handling for post view (simplified for now)
+    if (route.startsWith('post/')) {
+        const postId = route.split('/')[1];
+        contentArea.innerHTML = `
+            <section id="post-detail">
+                <a href="#blog">← Back to Blog</a>
+                <div id="post-content">Loading post...</div>
+            </section>
+        `;
+        loadPost(postId);
+        return;
     }
-    // Update hash for browser history support
-    window.location.hash = route;
+
+    const content = await routes[route] ? await routes[route]() : `<h2>404 - Not Found</h2>`;
+    contentArea.innerHTML = content;
+};
+
+const loadPost = async (postId) => {
+    try {
+        const response = await fetch('data/posts.json');
+        const posts = await response.json();
+        const post = posts.find(p => p.id === postId);
+
+        const detailArea = document.getElementById('post-content');
+        if (post) {
+            detailArea.innerHTML = `
+                <h2>${post.title}</h2>
+                <small>${post.date}</small>
+                <div class="post-body">
+                    ${post.content}
+                </div>
+            `;
+        } else {
+            detailArea.innerHTML = '<p>Post not found.</p>';
+        }
+    } catch (error) {
+        document.getElementById('post-content').innerHTML = '<p>Error loading post.</p>';
+    }
 };
 
 const handleRouting = () => {
@@ -47,9 +107,3 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // Listen for hash changes (navigation via links)
 window.addEventListener('hashchange', handleRouting);
-
-// Global setup for the app content area
-document.getElementById('app-content').addEventListener('click', (e) => {
-    // This is a simple way to handle navigation if we use hash-based links.
-    // In a more complex app, we would handle this via the event delegation or specific router logic.
-});

@@ -65,13 +65,19 @@ const navigateTo = async (route) => {
         return;
     }
 
-    const content = await routes[route] ? await routes[route]() : `<h2 class="title">404 - Not Found</h2>`;
-    contentArea.innerHTML = content;
+    const routeHandler = routes[route];
+    if (routeHandler) {
+        const content = await routeHandler();
+        contentArea.innerHTML = content;
+    } else {
+        contentArea.innerHTML = `<h2 class="title">404 - Not Found</h2>`;
+    }
 };
 
 const loadPost = async (postId) => {
     try {
         const response = await fetch('data/posts.json');
+        if (!response.ok) throw new Error('Could not fetch posts');
         const posts = await response.json();
         const post = posts.find(p => p.id === postId);
 
@@ -88,13 +94,32 @@ const loadPost = async (postId) => {
             detailArea.innerHTML = '<p>Post not found.</p>';
         }
     } catch (error) {
+        console.error('Error loading post:', error);
         const detailArea = document.getElementById('post-content');
         if (detailArea) detailArea.innerHTML = '<p>Error loading post.</p>';
     }
 };
 
+// Theme Management
+const toggleTheme = () => {
+    const body = document.body;
+    const icon = document.getElementById('theme-icon');
+    const currentTheme = body.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    body.setAttribute('data-theme', newTheme);
+    icon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', newTheme);
+};
+
 // Initialize the app
 window.addEventListener('DOMContentLoaded', () => {
+    // Apply saved theme
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.body.setAttribute('data-theme', savedTheme);
+    const icon = document.getElementById('theme-icon');
+    if (icon) icon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
     handleRouting();
 });
 
@@ -105,3 +130,6 @@ const handleRouting = () => {
 
 // Listen for hash changes (navigation via links)
 window.addEventListener('hashchange', handleRouting);
+
+// Attach theme toggle event
+document.getElementById('theme-toggle').addEventListener('click', toggleTheme);

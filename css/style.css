@@ -83,45 +83,45 @@ section {
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-.post h3 {
+.post-title {
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
 }
 
-.post small {
+.post-date {
     display: block;
     color: var(--secondary-text);
     margin-bottom: 1rem;
 }
 
-.post p {
+.post-excerpt {
     margin-bottom: 1rem;
 }
 
-.post a {
+.post-link {
     color: var(--accent-color);
     text-decoration: none;
     font-weight: bold;
 }
 
-.post a:hover {
+.post-link:hover {
     text-decoration: underline;
 }
 
 /* Post Detail */
-#post-detail a {
+#post-detail .back-link {
     display: inline-block;
     margin-bottom: 1rem;
     color: var(--secondary-text);
     text-decoration: none;
 }
 
-#post-detail h2 {
+#post-detail .post-title {
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
 }
 
-#post-detail small {
+#post-detail .post-date {
     display: block;
     color: var(--secondary-text);
     margin-bottom: 2rem;

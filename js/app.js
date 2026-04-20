@@ -22,22 +22,22 @@ const routes = {
             const posts = await response.json();
 
             if (posts.length === 0) {
-                return `<section id="blog"><h2>Thoughts & Logs</h2><p>No posts yet.</p></section>`;
+                return `<section id="blog"><h2 class="title">Thoughts & Logs</h2><p>No posts yet.</p></section>`;
             }
 
             let postsHtml = `
                 <section id="blog">
-                    <h2>Thoughts & Logs</h2>
+                    <h2 class="title">Thoughts & Logs</h2>
                     <div id="posts-list">
             `;
 
             posts.forEach(post => {
                 postsHtml += `
                     <article class="post">
-                        <h3>${post.title}</h3>
-                        <small>${post.date}</small>
-                        <p>${post.excerpt}</p>
-                        <a href="#post/${post.id}">Read more</a>
+                        <h3 class="post-title">${post.title}</h3>
+                        <small class="post-date">${post.date}</small>
+                        <p class="post-excerpt">${post.excerpt}</p>
+                        <a href="#post/${post.id}" class="post-link">Read more</a>
                     </article>
                 `;
             });
@@ -46,7 +46,7 @@ const routes = {
             return postsHtml;
         } catch (error) {
             console.error('Error loading posts:', error);
-            return `<section id="blog"><h2>Thoughts & Logs</h2><p>Error loading posts.</p></section>`;
+            return `<section id="blog"><h2 class="title">Thoughts & Logs</h2><p>Error loading posts.</p></section>`;
         }
     }
 };
@@ -60,7 +60,7 @@ const navigateTo = async (route) => {
         const postId = route.split('/')[1];
         contentArea.innerHTML = `
             <section id="post-detail">
-                <a href="#blog">← Back to Blog</a>
+                <a href="#blog" class="back-link">← Back to Blog</a>
                 <div id="post-content">Loading post...</div>
             </section>
         `;
@@ -68,7 +68,7 @@ const navigateTo = async (route) => {
         return;
     }
 
-    const content = await routes[route] ? await routes[route]() : `<h2>404 - Not Found</h2>`;
+    const content = await routes[route] ? await routes[route]() : `<h2 class="title">404 - Not Found</h2>`;
     contentArea.innerHTML = content;
 };
 
@@ -81,8 +81,8 @@ const loadPost = async (postId) => {
         const detailArea = document.getElementById('post-content');
         if (post) {
             detailArea.innerHTML = `
-                <h2>${post.title}</h2>
-                <small>${post.date}</small>
+                <h2 class="post-title">${post.title}</h2>
+                <small class="post-date">${post.date}</small>
                 <div class="post-body">
                     ${post.content}
                 </div>
@@ -93,11 +93,6 @@ const loadPost = async (postId) => {
     } catch (error) {
         document.getElementById('post-content').innerHTML = '<p>Error loading post.</p>';
     }
-};
-
-const handleRouting = () => {
-    const hash = window.location.hash.replace('#', '') || 'home';
-    navigateTo(hash);
 };
 
 // Initialize the app

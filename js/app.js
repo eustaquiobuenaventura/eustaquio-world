@@ -7,7 +7,7 @@ const routes = {
     'home': () => {
         return `
             <section id="home">
-                <h2>Welcome</h2>
+                <h2 class="title">Welcome</h2>
                 <p>This is the beginning of my digital evolution.</p>
             </section>
         `;
@@ -55,7 +55,7 @@ const navigateTo = async (route) => {
     const contentArea = document.getElementById('app-content');
     if (!contentArea) return;
 
-    // Special handling for post view (simplified for now)
+    // Handle post detail view
     if (route.startsWith('post/')) {
         const postId = route.split('/')[1];
         contentArea.innerHTML = `
@@ -91,7 +91,8 @@ const loadPost = async (postId) => {
             detailArea.innerHTML = '<p>Post not found.</p>';
         }
     } catch (error) {
-        document.getElementById('post-content').innerHTML = '<p>Error loading post.</p>';
+        const detailArea = document.getElementById('post-content');
+        if (detailArea) detailArea.innerHTML = '<p>Error loading post.</p>';
     }
 };
 
@@ -99,6 +100,11 @@ const loadPost = async (postId) => {
 window.addEventListener('DOMContentLoaded', () => {
     handleRouting();
 });
+
+const handleRouting = () => {
+    const hash = window.location.hash.replace('#', '') || 'home';
+    navigateTo(hash);
+};
 
 // Listen for hash changes (navigation via links)
 window.addEventListener('hashchange', handleRouting);

@@ -1,5 +1,12 @@
 [
   {
+    "id": 2,
+    "title": "Expanding the Digital Horizon",
+    "date": "2026-04-20",
+    "content": "The journey has just begun. I've implemented a dark mode and a more refined CSS architecture to ensure this space is as functional as it is aesthetic. This is my first real step into building a home for my thoughts.",
+    "author": "Eustaquio"
+  },
+  {
     "id": 1,
     "title": "The Genesis of Eustaquio World",
     "date": "2026-04-20",

@@ -45,6 +45,8 @@ const routes = {
                     <div id="posts-list">
             `;
 
+            posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
             posts.forEach(post => {
                 postsHtml += `
                     <article class="post">
@@ -96,52 +98,26 @@ const navigateTo = async (route) => {
     }
 };
 
-// Corrected navigateTo to handle the dynamic route handler correctly
-const fixedNavigateTo = async (route) => {
-    const contentArea = document.getElementById('app-content');
-    if (!contentArea) return;
-
-    // Handle post detail view
-    if (route.startsWith('post/')) {
-        const postId = route.split('/')[1];
-        contentArea.innerHTML = `
-            <section id="post-detail">
-                <a href="#blog" class="back-link">← Back to Blog</a>
-                <div id="post-content">Loading post...</div>
-            </section>
-        `;
-        loadPost(postId);
-        return;
-    }
-
-    const routeHandler = routes[route];
-    if (routeHandler) {
-        try {
-            const content = await routeHandler();
-            contentArea.innerHTML = content;
-        } catch (err) {
-            console.error('Route execution error:', err);
-            contentArea.innerHTML = `<h2 class="title">Error</h2><p>Something went wrong loading this view.</p>`;
-        }
-    } else {
-        contentArea.innerHTML = `<h2 class="title">404 - Not Found</h2>`;
-    }
-};
-
 const loadPost = async (postId) => {
     try {
+        // Fetch the index first to find the post metadata
         const response = await fetch('data/posts.json');
-        if (!response.ok) throw new Error('Could not fetch posts');
+        if (!response.ok) throw new Error('Could not fetch posts index');
         const posts = await response.json();
         const post = posts.find(p => p.id === postId);
 
         const detailArea = document.getElementById('post-content');
         if (post) {
+            // Fetch the specific content file from the post directory
+            const contentResponse = await fetch(`data/posts/${post.id}.html`);
+            if (!contentResponse.ok) throw new Error('Could not fetch post content');
+            const contentHtml = await contentResponse.text();
+
             detailArea.innerHTML = `
                 <h2 class="post-title">${post.title}</h2>
                 <small class="post-date">${post.date}</small>
                 <div class="post-body">
-                    ${post.content}
+                    ${contentHtml}
                 </div>
             `;
         } else {

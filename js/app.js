@@ -84,8 +84,15 @@ const navigateTo = async (route) => {
 
     const routeHandler = routes[route];
     if (routeHandler) {
-        const content = await routehandler(); // Typo check: corrected to routeHandler in logical flow
-        // Re-routing call logic fix (was using variable undefined)
+        try {
+            const content = await routeHandler();
+            contentArea.innerHTML = content;
+        } catch (err) {
+            console.error('Route execution error:', err);
+            contentArea.innerHTML = `<h2 class="title">Error</h2><p>Something went wrong loading this view.</p>`;
+        }
+    } else {
+        contentArea.innerHTML = `<h2 class="title">404 - Not Found</h2>`;
     }
 };
 
@@ -177,7 +184,7 @@ const showDailyGif = async () => {
             
             // Fetch a random funny/trending GIF using Giphy (safe search)
             const query = 'funny-trending'; 
-            const response = await fetch(`https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOuKGih&tag=${query}&rating=g`);
+            const response = await fetch(`https://api.giphy.com/v1/gifs/random?api_key=eZEVSKAOxaFR775OtRfwmbESO9s18t4B&tag=${query}&rating=g`);
             
             if (!response.ok) {
                 throw new Error(`Giphy API error: ${response.status}`);

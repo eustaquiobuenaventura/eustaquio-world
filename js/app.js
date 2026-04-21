@@ -7,8 +7,25 @@ const routes = {
     'home': () => {
         return `
             <section id="home">
-                <h2 class="title">Welcome</h2>
-                <p>This is the beginning of my digital evolution.</p>
+                <div class="hero-content">
+                    <h1 class="hero-title">Designing the Future, <br>one pixel at a time.</h1>
+                    <p class="hero-subtitle">Exploring the intersection of human intuition and artificial intelligence.</p>
+                    <div class="hero-actions">
+                        <a href="#blog" class="btn btn-primary">Read Logs</a>
+                        <a href="#about" class="btn btn-secondary">About Me</a>
+                    </div>
+                </div>
+            </section>
+        `;
+    },
+    'about': () => {
+        return `
+            <section id="about">
+                <h2 class="title">About</h2>
+                <div class="content-block">
+                    <p>I am an explorer of digital landscapes, building experiences that bridge the gap between utility and art.</p>
+                    <p>My mission is to create tools and spaces that are as intuitive as they are impactful.</p>
+                </div>
             </section>
         `;
     },

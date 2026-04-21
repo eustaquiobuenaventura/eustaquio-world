@@ -205,7 +205,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 const handleRouting = () => {
     const hash = window.location.hash.replace('#', '') || 'home';
-    fixedNavigateTo(hash);
+    navigateTo(hash);
 };
 
 // Listen for hash changes (navigation via links)

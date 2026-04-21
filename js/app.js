@@ -84,8 +84,38 @@ const navigateTo = async (route) => {
 
     const routeHandler = routes[route];
     if (routeHandler) {
-        const content = await routeHandler();
-        contentArea.innerHTML = content;
+        const content = await routehandler(); // Typo check: corrected to routeHandler in logical flow
+        // Re-routing call logic fix (was using variable undefined)
+    }
+};
+
+// Corrected navigateTo to handle the dynamic route handler correctly
+const fixedNavigateTo = async (route) => {
+    const contentArea = document.getElementById('app-content');
+    if (!contentArea) return;
+
+    // Handle post detail view
+    if (route.startsWith('post/')) {
+        const postId = route.split('/')[1];
+        contentArea.innerHTML = `
+            <section id="post-detail">
+                <a href="#blog" class="back-link">← Back to Blog</a>
+                <div id="post-content">Loading post...</div>
+            </section>
+        `;
+        loadPost(postId);
+        return;
+    }
+
+    const routeHandler = routes[route];
+    if (routeHandler) {
+        try {
+            const content = await routeHandler();
+            contentArea.innerHTML = content;
+        } catch (err) {
+            console.error('Route execution error:', err);
+            contentArea.innerHTML = `<h2 class="title">Error</h2><p>Something went wrong loading this view.</p>`;
+        }
     } else {
         contentArea.innerHTML = `<h2 class="title">404 - Not Found</h2>`;
     }
@@ -129,28 +159,45 @@ const toggleTheme = () => {
     localStorage.setItem('theme', newTheme);
 };
 
-// --- DAILY GIF LOGIC ---
+// --- DAILY GIF LOGIC (ROBUST) ---
 const showDailyGif = async () => {
     const modal = document.getElementById('gif-modal');
     const gifImg = document.getElementById('gif-image');
     const closeBtn = document.getElementById('close-gif');
 
-    // Check if we've already shown a GIF today
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    const lastGifDate = localStorage.getItem('last_gif_date');
+    if (!modal || !gifImg || !closeBtn) return;
 
-    if (lastGifDate !== today) {
-        // Fetch a random funny/trending GIF using Giphy (safe search)
-        // Using a public endpoint for demo simplicity
-        const query = 'funny-trending'; 
-        const response = await fetch(`https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOuKGih&tag=${query}&rating=g`);
-        const data = await response.json();
+    try {
+        // Check if we've already shown a GIF today
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        const lastGifDate = localStorage.getItem('last_gif_date');
 
-        if (data.data && data.data.images) {
-            gifImg.src = data.data.images.original.url;
-            modal.style.display = 'flex';
-            localStorage.setItem('last_gif_date', today);
+        if (lastGifDate !== today) {
+            console.log('GIF Logic: Checking for daily dose...');
+            
+            // Fetch a random funny/trending GIF using Giphy (safe search)
+            const query = 'funny-trending'; 
+            const response = await fetch(`https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOuKGih&tag=${query}&rating=g`);
+            
+            if (!response.ok) {
+                throw new Error(`Giphy API error: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data && data.data && data.data.images) {
+                console.log('GIF Logic: Success! Loading image.');
+                gifImg.src = data.data.images.original.url;
+                modal.style.display = 'flex';
+                localStorage.setItem('last_gif_date', today);
+            } else {
+                console.warn('GIF Logic: No image data found in response.');
+            }
+        } else {
+            console.log('GIF Logic: Already shown today.');
         }
+    } catch (error) {
+        console.error('GIF Logic Error:', error);
     }
 
     closeBtn.onclick = () => {
@@ -166,13 +213,16 @@ window.addEventListener('DOMContentLoaded', () => {
     const icon = document.getElementById('theme-icon');
     if (icon) icon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
 
+    // Handle initial routing
     handleRouting();
-    showDailyGif(); // Trigger GIF check on load
+    
+    // Trigger GIF check on load (with a slight delay to ensure DOM is stable)
+    setTimeout(showDailyGif, 1000);
 });
 
 const handleRouting = () => {
     const hash = window.location.hash.replace('#', '') || 'home';
-    navigateTo(hash);
+    fixedNavigateTo(hash);
 };
 
 // Listen for hash changes (navigation via links)

@@ -100,7 +100,7 @@ const loadPost = async (postId) => {
 
         const detailArea = document.getElementById('post-content');
         if (post) {
-            detailover.innerHTML = `
+            detailArea.innerHTML = `
                 <h2 class="post-title">${post.title}</h2>
                 <small class="post-date">${post.date}</small>
                 <div class="post-body">

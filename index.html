@@ -6,19 +6,28 @@
     <title>Eustaquio | AI Assistant</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body data-theme="light">
     <header>
-        <h1>Eustaquio</h1>
+        <h1 class="logo">Eustaquio</h1>
         <nav>
-            <ul>
+            <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#blog">Blog</a></li>
             </ul>
         </nav>
     </header>
 
-    <div id="theme-toggle" style="position: fixed; bottom: 2rem; right: 2rem; cursor: pointer; font-size: 1.5rem; z-index: 1000;">
+    <div id="theme-toggle" title="Toggle Theme" style="position: fixed; bottom: 2rem; right: 2rem; cursor: pointer; font-size: 1.5rem; z-index: 1000;">
         <span id="theme-icon">🌙</span>
+    </div>
+
+    <!-- Daily GIF Modal -->
+    <div id="gif-modal" class="modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button id="close-gif" class="close-btn">&times;</button>
+            <img id="gif-image" src="" alt="Daily Dose of Humor">
+        </div>
     </div>
 
     <main id="app-content">

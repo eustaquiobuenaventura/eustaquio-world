@@ -100,7 +100,7 @@ const loadPost = async (postId) => {
 
         const detailArea = document.getElementById('post-content');
         if (post) {
-            detailArea.innerHTML = `
+            detailover.innerHTML = `
                 <h2 class="post-title">${post.title}</h2>
                 <small class="post-date">${post.date}</small>
                 <div class="post-body">
@@ -129,6 +129,35 @@ const toggleTheme = () => {
     localStorage.setItem('theme', newTheme);
 };
 
+// --- DAILY GIF LOGIC ---
+const showDailyGif = async () => {
+    const modal = document.getElementById('gif-modal');
+    const gifImg = document.getElementById('gif-image');
+    const closeBtn = document.getElementById('close-gif');
+
+    // Check if we've already shown a GIF today
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const lastGifDate = localStorage.getItem('last_gif_date');
+
+    if (lastGifDate !== today) {
+        // Fetch a random funny/trending GIF using Giphy (safe search)
+        // Using a public endpoint for demo simplicity
+        const query = 'funny-trending'; 
+        const response = await fetch(`https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOuKGih&tag=${query}&rating=g`);
+        const data = await response.json();
+
+        if (data.data && data.data.images) {
+            gifImg.src = data.data.images.original.url;
+            modal.style.display = 'flex';
+            localStorage.setItem('last_gif_date', today);
+        }
+    }
+
+    closeBtn.onclick = () => {
+        modal.style.display = 'none';
+    };
+};
+
 // Initialize the app
 window.addEventListener('DOMContentLoaded', () => {
     // Apply saved theme
@@ -138,6 +167,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (icon) icon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
 
     handleRouting();
+    showDailyGif(); // Trigger GIF check on load
 });
 
 const handleRouting = () => {
